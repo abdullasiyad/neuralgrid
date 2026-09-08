@@ -5,10 +5,8 @@
   "main": "index.html",
   "type": "module",
   "scripts": {
-    "start": "python -m http.server 8080 || npx vite",
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "start": "python -m http.server 8080",
+    "build": "echo 'Static build ready'",
   },
   "keywords": [
     "cyberpunk",
