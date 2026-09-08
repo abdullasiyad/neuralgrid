@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEURAL-GRID</title>
+  <meta name="description" content="Autonomous cyberpunk 3D infrastructure observability, self-healing digital systems, and AI agent command center.">
+  
+  <!-- Open Graph Metadata -->
+  <meta property="og:title" content="NEURAL-GRID">
+  <meta property="og:description" content="Real-time 3D living city infrastructure intelligence and autonomous threat mitigation.">
+  <meta property="og:type" content="website">
+
+  <!-- Cyberpunk Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css?v=2.6">
+
+  <!-- External Libraries: GSAP & ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <!-- Preload Profile Video for Instant Playback -->
+  <link rel="preload" href="assets/WhatsApp%20Video%202026-09-08%20at%2011.43.38%20PM.mp4" as="video" type="video/mp4">
+</head>
+<body>
+
+  <!-- CRT Scanlines & Visual Effects Overlay -->
+  <div class="crt-overlay"></div>
+
+  <!-- Persistent 3D WebGL Viewport -->
+  <div id="city-viewport"></div>
+
+  <!-- WebGL Fallback Container -->
+  <div id="webgl-fallback">
+    <h2 style="font-family: var(--font-display); color: var(--red-alert); margin-bottom: 1rem;">WEBGL CORE OFFLINE</h2>
+    <p style="color: var(--text-normal); max-width: 500px; margin-bottom: 1.5rem;">
+      3D Visualization hardware acceleration is unavailable. Switching Overwatch system to telemetry command mode...
+    </p>
+    <a href="#telemetry-section" class="cyber-btn">VIEW TELEMETRY DASHBOARD</a>
+  </div>
+
+  <!-- Persistent Sci-Fi HUD Layer -->
+  <div class="hud-layer">
+    <!-- Top HUD Bar -->
+    <header class="hud-top-bar">
+      <div class="hud-brand">
+        <div class="brand-icon"></div>
+        <span>NEURAL-GRID</span>
+      </div>
+
+      <div id="hud-status-badge" class="hud-status-badge">
+        <div class="hud-status-dot"></div>
+        <span class="txt">● NOMINAL</span>
+      </div>
+
+      <ul class="hud-center-nav">
+        <li><a href="#hero-section" class="nav-link active">OVERVIEW</a></li>
+        <li><a href="#mesh-section" class="nav-link">MESH</a></li>
+        <li><a href="#sentinels-section" class="nav-link">SENTINELS</a></li>
+        <li><a href="#threats-section" class="nav-link">THREATS</a></li>
+        <li><a href="#telemetry-section" class="nav-link">TELEMETRY</a></li>
+        <li><a href="#terminal-section" class="nav-link">TERMINAL</a></li>
+      </ul>
+
+      <div class="hud-right-controls">
+        <button id="hud-mobile-toggle" class="hud-mobile-toggle" aria-label="Toggle Navigation Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Cyberpunk Mobile Navigation Drawer -->
+    <nav id="mobile-nav-drawer" class="mobile-nav-drawer" aria-label="Mobile Navigation">
+      <div class="mobile-nav-header">
+        <div class="mobile-nav-brand">OVERWATCH // NAVIGATION</div>
+        <button id="mobile-nav-close" class="mobile-nav-close" aria-label="Close Navigation">×</button>
+      </div>
+      <div class="mobile-nav-links">
+        <a href="#hero-section" class="mobile-nav-item active"><span class="m-num">01</span> OVERVIEW</a>
+        <a href="#mesh-section" class="mobile-nav-item"><span class="m-num">02</span> CLUSTER MESH</a>
+        <a href="#sentinels-section" class="mobile-nav-item"><span class="m-num">03</span> AI SENTINELS</a>
+        <a href="#threats-section" class="mobile-nav-item"><span class="m-num">04</span> THREAT MATRIX</a>
+        <a href="#telemetry-section" class="mobile-nav-item"><span class="m-num">05</span> TELEMETRY</a>
+        <a href="#terminal-section" class="mobile-nav-item"><span class="m-num">06</span> CLI TERMINAL</a>
+        <button id="mobile-btn-profile" class="cyber-btn" style="width:100%; margin-top:1rem; border-color:var(--cyan-main); color:var(--cyan-main);">👤 VIEW OPERATOR PROFILE</button>
+      </div>
+      <div class="mobile-nav-footer">
+        <div>CORE STATUS: <strong style="color:var(--green-nominal)">NOMINAL</strong></div>
+        <div style="font-size:0.7rem; color:var(--text-muted); margin-top:0.3rem;">NEURAL-GRID v1.0.4</div>
+      </div>
+    </nav>
+
+    <!-- Bottom HUD Bar -->
+    <footer class="hud-bottom-bar">
+      <div class="hud-metric-item"><span class="label">NODES:</span> <span class="value">128</span></div>
+      <div class="hud-metric-item"><span class="label">AGENTS:</span> <span class="value">04</span></div>
+      <div class="hud-metric-item"><span class="label">THREATS:</span> <span id="hud-val-threats" class="value">03</span></div>
+      <div class="hud-metric-item"><span class="label">THROUGHPUT:</span> <span id="hud-val-throughput" class="value">8.42 GB/s</span></div>
+      <div class="hud-metric-item"><span class="label">LATENCY:</span> <span id="hud-val-latency" class="value">23.4ms</span></div>
+      <div class="hud-metric-item"><span id="hud-val-clock" class="value">UTC --:--:--</span></div>
+      <div class="hud-metric-item"><span id="hud-val-stardate" class="value" style="color:var(--text-muted)">STARDATE 7742.19</span></div>
+      <div class="hud-metric-item"><span id="hud-val-fps" class="value" style="color:var(--green-nominal)">FPS 60</span></div>
+    </footer>
+
+    <!-- Corner Targeting Reticles -->
+    <div class="reticle-corner reticle-tl"></div>
+    <div class="reticle-corner reticle-tr"></div>
+    <div class="reticle-corner reticle-bl"></div>
+    <div class="reticle-corner reticle-br"></div>
+  </div>
+
+  <!-- Main Scrollable Content Overlay -->
+  <main class="content-wrapper">
+
+    <!-- SECTION 1: HERO COCKPIT -->
+    <section id="hero-section">
+      <div class="section-container">
+        <div class="cyber-panel hero-cockpit">
+          <div class="hero-sub-tag">// SYSTEM COCKPIT ACTIVE</div>
+          <h1 class="hero-title">NEURAL-GRID<br><span class="highlight">AUTONOMOUS</span> OVERWATCH</h1>
+          <p class="hero-description">
+            REAL-TIME INFRASTRUCTURE INTELLIGENCE. AUTONOMOUS THREAT RESPONSE. SELF-HEALING DIGITAL SYSTEMS.
+          </p>
+          <div class="hero-actions">
+            <button id="btn-enter-matrix" class="cyber-btn">ENTER COMMAND MATRIX</button>
+            <button id="btn-trigger-chaos" class="cyber-btn danger">⚠ TRIGGER CHAOS SIMULATION</button>
+          </div>
+          <div class="hero-metrics-grid">
+            <div class="hero-metric-card">
+              <span class="val">99.997%</span>
+              <span class="lbl">System Uptime</span>
+            </div>
+            <div class="hero-metric-card">
+              <span class="val">8.42 GB/s</span>
+              <span class="lbl">Throughput</span>
+            </div>
+            <div class="hero-metric-card">
+              <span class="val">23.4 ms</span>
+              <span class="lbl">Avg Latency</span>
+            </div>
+            <div class="hero-metric-card">
+              <span id="hero-val-cpu" class="val">41%</span>
+              <span class="lbl">CPU Load</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: INFRASTRUCTURE MESH & 3D INSPECTOR -->
+    <section id="mesh-section">
+      <div class="section-container">
+        <div class="section-header">
+          <div class="section-tag">CHAPTER 02</div>
+          <h2 class="section-title">INFRASTRUCTURE MESH</h2>
+          <p class="section-subtitle">Inspect live 3D service topology, query nodes, and filter microservice clusters.</p>
+        </div>
+
+        <div class="mesh-controls">
+          <div class="filter-btn-group">
+            <button class="filter-btn active" data-role="ALL">ALL NODES</button>
+            <button class="filter-btn" data-role="GATEWAY">GATEWAYS</button>
+            <button class="filter-btn" data-role="DATABASE">DATABASES</button>
+            <button class="filter-btn" data-role="AI_CORE">AI CORE</button>
+            <button class="filter-btn" data-role="EDGE">EDGE</button>
+          </div>
+          <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">
+            [CLICK 3D TOWER TO INSPECT NODE TELEMETRY]
+          </div>
+        </div>
+
+        <div class="mesh-layout-grid">
+          <div class="cyber-panel mesh-instruction-card">
+            <h3 style="font-family: var(--font-display); font-size: 1.1rem; color: var(--cyan-main); margin-bottom: 0.5rem;">
+              3D LIVING METROPOLIS MESH
+            </h3>
+            <p style="font-size: 0.9rem; color: var(--text-normal); line-height: 1.6;">
+              Every building represents a microservice cluster, database shard, or edge gateway. Luminous data packets travel continuously along high-speed service highways to maintain low-latency consensus.
+            </p>
+          </div>
+
+          <!-- Slide-in Node Inspector Side Drawer -->
+          <div id="node-inspector-drawer" class="cyber-panel node-inspector-panel">
+            <div class="inspector-header">
+              <div>
+                <div id="inspector-title" class="inspector-node-title">Database Core 01</div>
+                <div id="inspector-id" class="inspector-node-id">NODE_ID: NG-DB-014</div>
+                <div id="inspector-role" style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); margin-top: 2px;">ROLE: DATABASE</div>
+              </div>
+              <span id="inspector-status-badge" class="inspector-status nominal">NOMINAL</span>
+            </div>
+
+            <div class="inspector-metrics-list">
+              <div class="inspector-metric-box">
+                <label>LATENCY</label>
+                <val id="inspector-val-latency">18.4 ms</val>
+              </div>
+              <div class="inspector-metric-box">
+                <label>ERROR RATE</label>
+                <val id="inspector-val-error">0.04%</val>
+              </div>
+              <div class="inspector-metric-box">
+                <label>CPU LOAD</label>
+                <val id="inspector-val-cpu">41%</val>
+              </div>
+              <div class="inspector-metric-box">
+                <label>REQUESTS</label>
+                <val id="inspector-val-requests">12.4K/s</val>
+              </div>
+            </div>
+
+            <div class="inspector-chart-container">
+              <canvas id="inspector-chart"></canvas>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem;">
+              <button class="cyber-btn" style="padding: 0.4rem 0.8rem; font-size: 0.7rem; flex: 1;">VIEW TRACE</button>
+              <button id="btn-close-inspector" class="cyber-btn secondary" style="padding: 0.4rem 0.8rem; font-size: 0.7rem;">CLOSE</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: AI SENTINELS & PROMPT RUNNER -->
+    <section id="sentinels-section">
+      <div class="section-container">
+        <div class="section-header">
+          <div class="section-tag">CHAPTER 03</div>
+          <h2 class="section-title">AUTONOMOUS AI SENTINELS</h2>
+          <p class="section-subtitle">Self-governing AI agents continuously monitor, predict, and auto-heal system state.</p>
+        </div>
+
+        <!-- AI Agent Decision Pipeline Visualizer -->
+        <div class="cyber-panel decision-pipeline-panel" style="margin-bottom: 1.5rem; padding: 1rem 1.5rem;">
+          <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+            AUTONOMOUS AI DECISION PIPELINE:
+          </div>
+          <div class="pipeline-stages-grid">
+            <div class="pipeline-stage-item active" data-stage="DETECTION">1. DETECTION</div>
+            <div class="pipeline-stage-item" data-stage="CLASSIFICATION">2. CLASSIFICATION</div>
+            <div class="pipeline-stage-item" data-stage="PREDICTION">3. PREDICTION</div>
+            <div class="pipeline-stage-item" data-stage="DECISION">4. DECISION</div>
+            <div class="pipeline-stage-item" data-stage="ACTION">5. ACTION</div>
+            <div class="pipeline-stage-item" data-stage="VERIFICATION">6. VERIFICATION</div>
+          </div>
+        </div>
+
+        <div class="sentinels-grid">
+          <!-- Agent 1 -->
+          <div class="cyber-panel agent-card">
+            <div class="agent-header">
+              <div class="agent-code">AURA-1</div>
+              <div class="agent-role">Sentinel / Observability</div>
+            </div>
+            <p class="agent-purpose">Detects infrastructure anomalies and latency spikes before they cascade into outages.</p>
+            <div class="agent-footer">
+              <span>STATUS: <strong style="color:var(--green-nominal)">ACTIVE</strong></span>
+              <span class="agent-confidence">CONF: <span id="conf-val-aura">99.8%</span></span>
+            </div>
+          </div>
+
+          <!-- Agent 2 -->
+          <div class="cyber-panel agent-card">
+            <div class="agent-header">
+              <div class="agent-code">NEXUS-9</div>
+              <div class="agent-role">Autonomous Auto-Healer</div>
+            </div>
+            <p class="agent-purpose">Diagnoses cluster failures and executes auto-remediation protocols with zero human intervention.</p>
+            <div class="agent-footer">
+              <span>STATUS: <strong style="color:var(--cyan-main)">STANDBY</strong></span>
+              <span class="agent-confidence">CONF: <span id="conf-val-nexus">98.4%</span></span>
+            </div>
+          </div>
+
+          <!-- Agent 3 -->
+          <div class="cyber-panel agent-card">
+            <div class="agent-header">
+              <div class="agent-code">KRONOS</div>
+              <div class="agent-role">Predictive Scaler</div>
+            </div>
+            <p class="agent-purpose">Predicts traffic surges and dynamically provisions node compute capacity ahead of demand.</p>
+            <div class="agent-footer">
+              <span>STATUS: <strong style="color:var(--green-nominal)">ACTIVE</strong></span>
+              <span class="agent-confidence">CONF: <span id="conf-val-kronos">97.9%</span></span>
+            </div>
+          </div>
+
+          <!-- Agent 4 -->
+          <div class="cyber-panel agent-card">
+            <div class="agent-header">
+              <div class="agent-code">CIPHER</div>
+              <div class="agent-role">Threat Shield</div>
+            </div>
+            <p class="agent-purpose">Detects malicious vector activity, isolates corrupted pods, and re-routes encrypted traffic.</p>
+            <div class="agent-footer">
+              <span>STATUS: <strong style="color:var(--amber-warn)">GUARDING</strong></span>
+              <span class="agent-confidence">CONF: <span id="conf-val-cipher">99.2%</span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Inter-Agent Communication Chat & Prompt Box -->
+        <div class="sentinels-bottom-grid">
+          <!-- Inter-Agent Chat Feed -->
+          <div class="cyber-panel ai-prompt-box">
+            <h3 style="font-family: var(--font-display); font-size: 0.95rem; color: var(--cyan-main); margin-bottom: 0.6rem;">
+              LIVE INTER-AGENT COMMUNICATION STREAM
+            </h3>
+            <div id="inter-agent-chat-list" class="inter-agent-chat-container">
+              <div class="agent-chat-line aura-1"><span class="time">[00:00:01]</span> <strong class="sender">AURA-1:</strong> Sentinel Fleet online. All node metrics nominal.</div>
+            </div>
+          </div>
+
+          <!-- Interactive AI Prompt Runner Box -->
+          <div class="cyber-panel ai-prompt-box">
+            <h3 style="font-family: var(--font-display); font-size: 0.95rem; color: var(--cyan-main); margin-bottom: 0.4rem;">
+              INTERACTIVE SENTINEL PROMPT TERMINAL
+            </h3>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.6rem;">
+              Query autonomous AI agents or click a suggested prompt chip:
+            </p>
+
+            <!-- Suggested Prompt Chips -->
+            <div class="prompt-chips-container" style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.8rem;">
+              <button class="ai-prompt-chip" data-prompt="Reveal Abdulla Siyad Profile" style="border-color:var(--cyan-main); color:var(--cyan-main); font-weight:700;">👤 Operator Profile</button>
+              <button class="ai-prompt-chip" data-prompt="Analyze current anomalies">💡 Analyze anomalies</button>
+              <button class="ai-prompt-chip" data-prompt="Why is latency increasing?">⚡ Check latency</button>
+              <button class="ai-prompt-chip" data-prompt="Status of CIPHER Threat Shield">🛡️ Status of CIPHER</button>
+              <button class="ai-prompt-chip" data-prompt="Predict next traffic surge">🚀 Predict traffic surge</button>
+              <button class="ai-prompt-chip" data-prompt="Run infrastructure scan">🔍 Run scan</button>
+              <button class="ai-prompt-chip" data-prompt="Explain current threat vector">🔥 Explain threat</button>
+            </div>
+
+            <div class="ai-prompt-input-row">
+              <input id="ai-prompt-input" type="text" class="ai-prompt-input" placeholder="> Ask the Sentinel... (e.g. 'Analyze current anomalies')">
+              <button id="btn-submit-prompt" class="cyber-btn">QUERY AGENT</button>
+            </div>
+            <div id="ai-response-output" class="ai-response-output">
+              > Sentinel Fleet online. Enter a diagnostic query above or click a suggestion chip.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: THREAT MATRIX & INCIDENT COMMAND -->
+    <section id="threats-section">
+      <div class="section-container">
+        <div class="section-header">
+          <div class="section-tag">CHAPTER 04</div>
+          <h2 class="section-title">INCIDENT COMMAND & THREAT MATRIX</h2>
+          <p class="section-subtitle">Simulate multi-vector cyber infrastructure threats and execute blackout protocols.</p>
+        </div>
+
+        <!-- Threat Vector Scenario Selector Bar: Black & Red Edition 4-in-a-row -->
+        <div class="cyber-panel threat-scenarios-bar">
+          <div class="threat-scenarios-header">
+            <span class="threat-badge-live">● LIVE THREAT INJECTION</span>
+            <span class="threat-instruction-txt">SELECT VECTOR TO EXECUTE SIMULATION // FOUR-SECTOR MATRIX</span>
+          </div>
+          <div class="threat-scenario-grid">
+            <!-- Vector 1: Server Overload -->
+            <button id="btn-scenario-overload" class="threat-square-btn vec-crimson" title="Simulate Server Overload Spike">
+              <div class="threat-btn-top">
+                <span class="threat-vec-tag">VEC-01</span>
+                <span class="threat-pulse-dot"></span>
+              </div>
+              <div class="threat-btn-icon">⚡</div>
+              <div class="threat-btn-body">
+                <div class="threat-btn-title">SERVER OVERLOAD</div>
+                <div class="threat-btn-sub">LATENCY BURST</div>
+              </div>
+              <div class="threat-btn-foot">ARMED // TRIGGER</div>
+            </button>
+
+            <!-- Vector 2: Network Intrusion -->
+            <button id="btn-scenario-intrusion" class="threat-square-btn vec-cyan" title="Simulate Malicious Packet Intrusion">
+              <div class="threat-btn-top">
+                <span class="threat-vec-tag">VEC-02</span>
+                <span class="threat-pulse-dot"></span>
+              </div>
+              <div class="threat-btn-icon">🌐</div>
+              <div class="threat-btn-body">
+                <div class="threat-btn-title">NETWORK INTRUSION</div>
+                <div class="threat-btn-sub">PACKET INJECT</div>
+              </div>
+              <div class="threat-btn-foot">ARMED // TRIGGER</div>
+            </button>
+
+            <!-- Vector 3: AI Model Drift -->
+            <button id="btn-scenario-drift" class="threat-square-btn vec-violet" title="Simulate Neural Weight Drift">
+              <div class="threat-btn-top">
+                <span class="threat-vec-tag">VEC-03</span>
+                <span class="threat-pulse-dot"></span>
+              </div>
+              <div class="threat-btn-icon">🧠</div>
+              <div class="threat-btn-body">
+                <div class="threat-btn-title">AI MODEL DRIFT</div>
+                <div class="threat-btn-sub">CONF DEGRADE</div>
+              </div>
+              <div class="threat-btn-foot">ARMED // TRIGGER</div>
+            </button>
+
+            <!-- Vector 4: Cascading Failure -->
+            <button id="btn-scenario-cascade" class="threat-square-btn vec-amber" title="Simulate Node Cascade Failure">
+              <div class="threat-btn-top">
+                <span class="threat-vec-tag">VEC-04</span>
+                <span class="threat-pulse-dot"></span>
+              </div>
+              <div class="threat-btn-icon">💥</div>
+              <div class="threat-btn-body">
+                <div class="threat-btn-title">CASCADE FAILURE</div>
+                <div class="threat-btn-sub">CIRCUIT TRIP</div>
+              </div>
+              <div class="threat-btn-foot">ARMED // TRIGGER</div>
+            </button>
+
+            <!-- Vector 5: Unknown Anomaly -->
+            <button id="btn-scenario-unknown" class="threat-square-btn vec-toxic" title="Simulate Zero-Day Anomaly">
+              <div class="threat-btn-top">
+                <span class="threat-vec-tag">VEC-05</span>
+                <span class="threat-pulse-dot"></span>
+              </div>
+              <div class="threat-btn-icon">☣</div>
+              <div class="threat-btn-body">
+                <div class="threat-btn-title">UNKNOWN ANOMALY</div>
+                <div class="threat-btn-sub">ZERO-DAY SCAN</div>
+              </div>
+              <div class="threat-btn-foot">ARMED // TRIGGER</div>
+            </button>
+
+            <!-- Vector 6: Blackout Protocol -->
+            <button id="btn-trigger-blackout" class="threat-square-btn vec-magenta blackout" title="Initiate Full Grid Blackout Protocol">
+              <div class="threat-btn-top">
+                <span class="threat-vec-tag">VEC-06</span>
+                <span class="threat-pulse-dot"></span>
+              </div>
+              <div class="threat-btn-icon">💀</div>
+              <div class="threat-btn-body">
+                <div class="threat-btn-title">BLACKOUT PROTOCOL</div>
+                <div class="threat-btn-sub">GRID QUARANTINE</div>
+              </div>
+              <div class="threat-btn-foot">CRITICAL PROTOCOL</div>
+            </button>
+
+            <!-- Vector 7: Chaos Engine -->
+            <button id="btn-threat-chaos" class="threat-square-btn vec-gold chaos" title="Inject Synthetic Chaos Saturation">
+              <div class="threat-btn-top">
+                <span class="threat-vec-tag">VEC-07</span>
+                <span class="threat-pulse-dot"></span>
+              </div>
+              <div class="threat-btn-icon">⚠</div>
+              <div class="threat-btn-body">
+                <div class="threat-btn-title">CHAOS ENGINE</div>
+                <div class="threat-btn-sub">TEST AUTO-HEAL</div>
+              </div>
+              <div class="threat-btn-foot">CHAOS INJECT</div>
+            </button>
+
+            <!-- Vector 8: System Reset -->
+            <button id="btn-system-reset" class="threat-square-btn vec-emerald reset" title="Restore Cluster to Nominal Baseline">
+              <div class="threat-btn-top">
+                <span class="threat-vec-tag">VEC-08</span>
+                <span class="threat-pulse-dot green"></span>
+              </div>
+              <div class="threat-btn-icon">🔄</div>
+              <div class="threat-btn-body">
+                <div class="threat-btn-title">SYSTEM RESET</div>
+                <div class="threat-btn-sub">RESTORE NOMINAL</div>
+              </div>
+              <div class="threat-btn-foot">PURGE & RESTORE</div>
+            </button>
+          </div>
+        </div>
+
+        <div class="threat-matrix-wrapper">
+          <!-- Chaos Trigger & Threat Gauge Panel -->
+          <div class="cyber-panel chaos-trigger-panel">
+            <h3 style="font-family: var(--font-display); font-size: 1.1rem; color: #fff; margin-bottom: 0.5rem;">
+              CHAOS ENGINE
+            </h3>
+            <p style="font-size: 0.85rem; color: var(--text-normal); margin-bottom: 1.2rem;">
+              Inject synthetic infrastructure saturation to test autonomous Sentinel auto-healing.
+            </p>
+            <button id="btn-threat-chaos-main" class="cyber-btn danger" style="width: 100%;">
+              ⚠ TRIGGER CHAOS SIMULATION
+            </button>
+
+            <div class="threat-gauge-container">
+              <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.3rem;">
+                <span>THREAT METER</span>
+                <span>SYSTEM STATE</span>
+              </div>
+              <div class="threat-meter-bar">
+                <div class="threat-meter-fill"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Incident Command Timeline Panel -->
+          <div class="cyber-panel incident-timeline-panel">
+            <h3 style="font-family: var(--font-display); font-size: 1.1rem; color: var(--cyan-main); margin-bottom: 1rem;">
+              INCIDENT RESPONSE TIMELINE
+            </h3>
+            <ul id="incident-timeline-list" class="incident-timeline-list">
+              <li class="timeline-item">
+                <span>00:00</span>
+                <strong>[INFO]</strong>
+                <span>SYSTEM NOMINAL. NO ANOMALIES DETECTED.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: TELEMETRY DASHBOARD -->
+    <section id="telemetry-section">
+      <div class="section-container">
+        <div class="section-header">
+          <div class="section-tag">CHAPTER 05</div>
+          <h2 class="section-title">MULTI-PANE TELEMETRY DASHBOARD</h2>
+          <p class="section-subtitle">Real-time observability streaming metrics, latency distribution heatmaps, and trace waterfalls.</p>
+        </div>
+
+        <div class="telemetry-grid">
+          <!-- Latency Chart Pane -->
+          <div class="cyber-panel telemetry-card">
+            <div class="telemetry-card-title">
+              <span>LATENCY STREAM (MS)</span>
+              <span style="color:var(--cyan-main)">LIVE</span>
+            </div>
+            <div style="height: 140px; width: 100%;">
+              <canvas id="chart-latency"></canvas>
+            </div>
+          </div>
+
+          <!-- Error Rate Chart Pane -->
+          <div class="cyber-panel telemetry-card">
+            <div class="telemetry-card-title">
+              <span>ERROR RATE (%)</span>
+              <span style="color:var(--amber-warn)">MONITORING</span>
+            </div>
+            <div style="height: 140px; width: 100%;">
+              <canvas id="chart-error"></canvas>
+            </div>
+          </div>
+
+          <!-- Trace Waterfall Pane -->
+          <div class="cyber-panel telemetry-card">
+            <div class="telemetry-card-title">
+              <span>SERVICE TRACE WATERFALL</span>
+              <span style="color:var(--cyan-main)">23.4ms</span>
+            </div>
+            <div class="trace-waterfall">
+              <div class="trace-row">
+                <span>API Gateway</span>
+                <div class="trace-bar-bg"><div class="trace-bar-fill" data-base="90"></div></div>
+                <span>12ms</span>
+              </div>
+              <div class="trace-row">
+                <span>Auth Sentinel</span>
+                <div class="trace-bar-bg"><div class="trace-bar-fill" data-base="65"></div></div>
+                <span>8ms</span>
+              </div>
+              <div class="trace-row">
+                <span>AI Inference</span>
+                <div class="trace-bar-bg"><div class="trace-bar-fill" data-base="85"></div></div>
+                <span>15ms</span>
+              </div>
+              <div class="trace-row">
+                <span>Database Core</span>
+                <div class="trace-bar-bg"><div class="trace-bar-fill" data-base="45"></div></div>
+                <span>5ms</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Matrix Heatmap & Real-Time Event Stream -->
+        <div class="telemetry-bottom-grid">
+          <!-- Heatmap -->
+          <div class="cyber-panel telemetry-card">
+            <div class="telemetry-card-title">
+              <span>LATENCY DISTRIBUTION HEATMAP</span>
+              <span style="color:var(--text-muted)">20 NODES</span>
+            </div>
+            <div class="heatmap-grid">
+              <div class="heatmap-cell">GW1</div><div class="heatmap-cell">GW2</div><div class="heatmap-cell">AU1</div><div class="heatmap-cell">AU2</div>
+              <div class="heatmap-cell">DB1</div><div class="heatmap-cell">DB2</div><div class="heatmap-cell">DB3</div><div class="heatmap-cell">AI1</div>
+              <div class="heatmap-cell">AI2</div><div class="heatmap-cell">AI3</div><div class="heatmap-cell">ED1</div><div class="heatmap-cell">ED2</div>
+              <div class="heatmap-cell">ED3</div><div class="heatmap-cell">CH1</div><div class="heatmap-cell">CH2</div><div class="heatmap-cell">QU1</div>
+              <div class="heatmap-cell">QU2</div><div class="heatmap-cell">QU3</div><div class="heatmap-cell">SV1</div><div class="heatmap-cell">SV2</div>
+            </div>
+          </div>
+
+          <!-- Event Stream Log -->
+          <div class="cyber-panel telemetry-card">
+            <div class="telemetry-card-title">
+              <span>REAL-TIME EVENT STREAM</span>
+              <span style="color:var(--green-nominal)">STREAMING</span>
+            </div>
+            <div id="event-stream-list" class="event-stream-container"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: INTERACTIVE SCI-FI TERMINAL -->
+    <section id="terminal-section">
+      <div class="section-container">
+        <div class="section-header">
+          <div class="section-tag">CHAPTER 06</div>
+          <h2 class="section-title">COMMAND LINE INTERFACE</h2>
+          <p class="section-subtitle">Direct CLI terminal access to query system state, execute scans, or force auto-remediation.</p>
+        </div>
+
+        <div class="terminal-layout-grid">
+          <!-- CLI Terminal Window -->
+          <div class="cyber-panel cli-terminal-window">
+            <div class="cli-titlebar">
+              <div class="cli-dots">
+                <div class="cli-dot red"></div>
+                <div class="cli-dot yellow"></div>
+                <div class="cli-dot green"></div>
+              </div>
+              <span>neural@overwatch:~ (tty1)</span>
+              <span>SYSTEM DIRECT ACCESS</span>
+            </div>
+
+            <div class="cli-body">
+              <div id="cli-output" class="cli-history">
+                <div class="cli-line">NEURAL-GRID // OVERWATCH TERMINAL DIRECT ACCESS v1.0.4 (OMEGA CORE)</div>
+                <div class="cli-line">Type '<span style="color:var(--cyan-main)">help</span>', '<span style="color:var(--green-nominal)">matrix</span>', '<span style="color:var(--amber-warn)">neofetch</span>', or '<span style="color:var(--red-alert)">sudo su</span>' to begin.</div>
+              </div>
+
+              <div class="cli-input-row">
+                <span class="cli-prompt-label">neural@overwatch:~$</span>
+                <input id="cli-input" type="text" class="cli-input" autocomplete="off" spellcheck="false" placeholder="type a command...">
+              </div>
+            </div>
+          </div>
+
+          <!-- Suggested Commands Cheatsheet Sidebar -->
+          <div class="cyber-panel cli-chips-sidebar">
+            <h3 class="chips-sidebar-title">// QUICK COMMAND CHIPS</h3>
+            <p class="chips-sidebar-subtitle">Click any command chip below to execute directly in the terminal:</p>
+
+            <div class="chip-category">
+              <span class="chip-category-label">DIAGNOSTICS & SYSTEM</span>
+              <div class="chip-group">
+                <button class="cmd-chip highlight" data-cmd="whoami">whoami</button>
+                <button class="cmd-chip" data-cmd="status">status</button>
+                <button class="cmd-chip" data-cmd="scan">scan</button>
+                <button class="cmd-chip" data-cmd="metrics">metrics</button>
+                <button class="cmd-chip highlight" data-cmd="neofetch">neofetch</button>
+                <button class="cmd-chip" data-cmd="top">top</button>
+              </div>
+            </div>
+
+            <div class="chip-category">
+              <span class="chip-category-label">3D MESH & INSPECT</span>
+              <div class="chip-group">
+                <button class="cmd-chip" data-cmd="nodes">nodes</button>
+                <button class="cmd-chip" data-cmd="inspect NG-DB-014">inspect NG-DB-014</button>
+                <button class="cmd-chip" data-cmd="filter GATEWAY">filter GATEWAY</button>
+                <button class="cmd-chip" data-cmd="filter DATABASE">filter DATABASE</button>
+              </div>
+            </div>
+
+            <div class="chip-category">
+              <span class="chip-category-label">CHAOS & HEALING</span>
+              <div class="chip-group">
+                <button class="cmd-chip danger" data-cmd="chaos">chaos</button>
+                <button class="cmd-chip" data-cmd="heal">heal</button>
+                <button class="cmd-chip" data-cmd="threats">threats</button>
+                <button class="cmd-chip" data-cmd="deploy">deploy</button>
+              </div>
+            </div>
+
+            <div class="chip-category">
+              <span class="chip-category-label">MATRIX & SUDO OMEGA</span>
+              <div class="chip-group">
+                <button class="cmd-chip matrix" data-cmd="matrix">matrix</button>
+                <button class="cmd-chip sudo" data-cmd="sudo su">sudo su</button>
+                <button class="cmd-chip sudo" data-cmd="sudo override">sudo override</button>
+                <button class="cmd-chip sudo" data-cmd="sudo purge">sudo purge</button>
+                <button class="cmd-chip" data-cmd="clear">clear</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Preloaded Profile Portrait Video -->
+  <video id="profile-preloaded-video" src="assets/WhatsApp%20Video%202026-09-08%20at%2011.43.38%20PM.mp4" preload="auto" muted loop playsinline webkit-playsinline style="position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;"></video>
+
+  <!-- ABDULLA SIYAD PROFILE REVEAL SYSTEM OVERLAY -->
+  <div id="profile-overlay-backdrop">
+    <div class="profile-card-window">
+      <!-- Close Button -->
+      <button id="btn-close-profile" class="profile-close-btn" title="Close Profile (ESC)">×</button>
+
+      <!-- 3D Neural Viewport Column -->
+      <div class="profile-viewport-col">
+        <canvas id="profile-3d-canvas"></canvas>
+      </div>
+
+      <!-- Details Column -->
+      <div class="profile-details-col">
+        <!-- Security Scan Boot Screen -->
+        <div id="profile-scan-overlay" class="profile-scan-overlay">
+          <div class="profile-scan-laser"></div>
+          <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--cyan-main); margin-bottom: 0.8rem; letter-spacing: 2px;">
+            [IDENTITY SCAN INITIALIZING]
+          </div>
+          <div id="scan-hud-status" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); text-align: center; line-height: 1.6;">
+            SCANNING OPERATOR BIOMETRIC VECTOR...<br>
+            <span style="color:var(--green-nominal)">> MATCH CONFIRMED (99.98%)</span>
+          </div>
+        </div>
+
+        <!-- Header Status Bar -->
+        <div class="profile-status-bar">
+          <div>IDENTITY: <strong style="color:var(--cyan-main)">VERIFIED // AS-01</strong></div>
+          <div class="profile-status-badge">
+            <span style="width:7px; height:7px; background:var(--green-nominal); border-radius:50%; display:inline-block; box-shadow: 0 0 8px var(--green-nominal);"></span>
+            SECURITY POSTURE: ACTIVE
+          </div>
+        </div>
+
+        <!-- Identity Titles -->
+        <div>
+          <h2 class="profile-name-title">ABDULLA SIYAD</h2>
+          <div class="profile-primary-role">JAVA FULL STACK DEVELOPER</div>
+        </div>
+
+        <!-- Mission Profile Statement -->
+        <div class="profile-mission-box">
+          <strong style="color:#fff; display:block; margin-bottom:0.2rem;">MISSION PROFILE:</strong>
+          Builds scalable, high-performance enterprise applications &amp; hardens infrastructure against real-world vulnerabilities. Secure every layer. Trust nothing by default.
+        </div>
+
+        <!-- Core Technologies -->
+        <div>
+          <div class="profile-section-heading">// CORE DEVELOPMENT PROTOCOLS</div>
+          <div class="profile-badges-row">
+            <span class="profile-tech-pill">JAVA</span>
+            <span class="profile-tech-pill">SPRING BOOT</span>
+            <span class="profile-tech-pill">REST APIs</span>
+            <span class="profile-tech-pill">REACT</span>
+            <span class="profile-tech-pill">JAVASCRIPT</span>
+            <span class="profile-tech-pill">MYSQL</span>
+            <span class="profile-tech-pill">PYTHON</span>
+            <span class="profile-tech-pill">GIT</span>
+            <span class="profile-tech-pill">AWS</span>
+          </div>
+        </div>
+
+        <!-- Cybersecurity Capabilities -->
+        <div>
+          <div class="profile-section-heading">// CYBERSECURITY SPECIALIZATION</div>
+          <div class="profile-badges-row">
+            <span class="profile-security-pill">CYBERSECURITY</span>
+            <span class="profile-security-pill">ETHICAL HACKING</span>
+            <span class="profile-security-pill">SECURE SOFTWARE DEV</span>
+            <span class="profile-security-pill">APPLICATION SECURITY</span>
+            <span class="profile-security-pill">VULNERABILITY ASSESSMENT</span>
+            <span class="profile-security-pill">NETWORK SECURITY</span>
+          </div>
+        </div>
+
+        <!-- Footer Motto & 5s Presentation Progress Bar -->
+        <div style="position:relative; margin-top:0.8rem;">
+          <div class="profile-footer-motto">> BUILD. DEFEND. DOMINATE.</div>
+          <div id="profile-timer-bar" class="profile-timer-bar"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ES Module Application Bootstrap -->
+  <script type="module" src="js/app.js"></script>
+
+</body>
+</html>
